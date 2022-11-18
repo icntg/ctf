@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员登录</title>
+    <link rel="stylesheet" href="css/pure.css">
+</head>
+<body>
+    <div style="width: 960px; margin: auto; padding-top: 30px;">
+        <form class="pure-form pure-form-stacked" method="post">
+            <fieldset>
+                <legend>管理员登录</legend>
+
+                <label for="username">账号</label>
+                <input class="pure-u-1" id="username" type="text" name="username" placeholder="账号" autocomplete="off" value="admin">
+
+                <label for="password">密码</label>
+                <input class="pure-u-1" id="password" type="password" name="password" placeholder="密码" autocomplete="off">
+                <span class="pure-form-message-inline">据说密码是6位数字</span>
+
+                <label for="remember" class="pure-checkbox">
+                    <input id="remember" type="checkbox" name="rememberMe"> 记住账号密码
+                </label>
+
+                <button type="submit" class="pure-button pure-button-primary pure-u-1">登录</button>
+            </fieldset>
+        </form>
+    </div>
+</body>
+</html>

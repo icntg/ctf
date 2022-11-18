@@ -1,0 +1,1 @@
+flag{PHP-1s-s0-funny!}

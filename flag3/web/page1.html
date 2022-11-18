@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>来道口算题</title>
+    <link rel="stylesheet" href="css/pure.css">
+</head>
+<body>
+    <div style="width: 960px; margin: auto; padding-top: 30px;">
+        <form class="pure-form pure-form-stacked" method="post">
+            <fieldset>
+                <legend>不错，竟然被你弄到管理员密码了，你一定是个天才！那么来做一道非常简单的口算题轻松一下吧。</legend>
+
+                <label for="answer">{{.Big0}} + {{.Big1}} = ?</label>
+                <input class="pure-u-1" id="answer" type="text" name="answer" placeholder="求和" autocomplete="off" value="">
+                <span class="pure-form-message-inline">请在3秒之内算出来哦</span><br/><br/>
+                <button type="submit" class="pure-button pure-button-primary pure-u-1">算好了！</button>
+            </fieldset>
+        </form>
+    </div>
+</body>
+</html>

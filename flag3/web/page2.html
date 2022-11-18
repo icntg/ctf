@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>缺失的MD5</title>
+    <link rel="stylesheet" href="css/pure.css">
+</head>
+<body>
+    <div style="width: 960px; margin: auto; padding-top: 30px;">
+        <form class="pure-form pure-form-stacked" method="post">
+            <fieldset>
+                <legend>拖库时找到了一些有用的信息，但是已经被脱敏了。这些肯定难不倒你。请还原出有用的数据吧。</legend>
+
+                <label for="answer">md5( {{.Hash10Cover}} ) = {{.Hash10Value}}</label>
+                <input class="pure-u-1" id="answer" type="text" name="answer" placeholder="原始数据，而不是摘要结果" autocomplete="off" value="">
+                <br/>
+                <button type="submit" class="pure-button pure-button-primary pure-u-1">确定</button>
+            </fieldset>
+        </form>
+    </div>
+</body>
+</html>
