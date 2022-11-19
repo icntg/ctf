@@ -30,7 +30,6 @@ import (
 
 const (
 	SessionName = "PHPSESSID"
-	SessionKey  = "w"
 )
 
 var (
@@ -174,6 +173,8 @@ func (u *Utility) DecryptDeserialize(key []byte, b64stream string, out interface
 type Config struct {
 	Host      string
 	Port      uint16
+	Timeout   int
+	Debug     bool
 	SecretHex string
 	secret    []byte
 }
@@ -186,7 +187,7 @@ func (c *Config) ReadFrom(TomlFilename string) {
 	viper.AddConfigPath(gUtility.CurrentAbsolutePathOfExecutable())                   //搜索路径可以设置多个，viper 会根据设置顺序依次查找
 	viper.AddConfigPath(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web")) //搜索路径可以设置多个，viper 会根据设置顺序依次查找
 	viper.AddConfigPath(".")                                                          //搜索路径可以设置多个，viper 会根据设置顺序依次查找
-	viper.AddConfigPath(path.Join(".", "web"))                                        //搜索路径可以设置多个，viper 会根据设置顺序依次查找
+	//viper.AddConfigPath(path.Join(".", "web"))                                        //搜索路径可以设置多个，viper 会根据设置顺序依次查找
 	if err := viper.ReadInConfig(); nil != err {
 		log.Fatalf("read config failed: %v", err)
 	}
@@ -216,6 +217,7 @@ type Web struct {
 	Hash10Cover    string // 打码
 	Hash10Value    string // MD5打码
 	StartTimestamp int64
+	Timeout        int64
 	Step           int
 }
 
@@ -279,6 +281,7 @@ func (w *Web) init(remoteIp string) {
 	{
 		w.Step = 0
 		w.StartTimestamp = 0
+		w.Timeout = int64(gConfig.Timeout)
 	}
 }
 
@@ -318,7 +321,8 @@ func (w *Web) IndexGet(c *gin.Context) {
 	w.serviceCookieSet(c, gUtility.SerializeEncrypt(gConfig.Secret(), w))
 	log.Printf("[DEBUG] remoteIp = %s, session = %v\n", c.RemoteIP(), *w)
 
-	html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page0.html"), nil)
+	//html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page0.html"), nil)
+	html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "page0.html"), nil)
 	c.Header("Content-Type", "text/html; charset=UTF-8")
 	c.String(http.StatusOK, "%v", html)
 }
@@ -346,7 +350,8 @@ func (w *Web) postPage0(c *gin.Context) string {
 	if username == "admin" && password == w.Password6 {
 		w.Step = 1
 		w.StartTimestamp = time.Now().Unix()
-		return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page1.html"), w)
+		//return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page1.html"), w)
+		return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "page1.html"), w)
 	} else {
 		return "账号或密码错误，请重试！"
 	}
@@ -354,7 +359,7 @@ func (w *Web) postPage0(c *gin.Context) string {
 
 func (w *Web) postPage1(c *gin.Context) string {
 	var now = time.Now().Unix()
-	if now-w.StartTimestamp > 3 {
+	if now-w.StartTimestamp > w.Timeout {
 		return "超时了！请重试！"
 	}
 	var bigAns *big.Int
@@ -370,7 +375,8 @@ func (w *Web) postPage1(c *gin.Context) string {
 	if bigAns.Cmp(expAns) == 0 {
 		w.Step = 2
 		w.StartTimestamp = 0
-		return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page2.html"), w)
+		//return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page2.html"), w)
+		return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "page2.html"), w)
 	} else {
 		return "计算结果错误！请重试！"
 	}
@@ -379,7 +385,8 @@ func (w *Web) postPage1(c *gin.Context) string {
 func (w *Web) postPage2(c *gin.Context) string {
 	answer := c.PostForm("answer")
 	if answer == w.Hash10 {
-		return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "flag.txt"), w)
+		//return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "flag.txt"), w)
+		return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "flag.txt"), w)
 	}
 	return "数据错误！请重试！"
 }
@@ -414,7 +421,14 @@ func main() {
 	var err error
 	gConfig.ReadFrom("config.toml")
 
+	if gConfig.Debug {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.Default()
+
 	//store := memstore.NewStore()
 	//store.Options(sessions.Options{
 	//	Secure:   false,
@@ -422,8 +436,10 @@ func main() {
 	//	SameSite: 3,
 	//})
 	//r.Use(sessions.Sessions(SessionName, store))
-	r.StaticFile("/favicon.ico", path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "favicon.ico"))
-	r.StaticFile("/css/pure.css", path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "css", "pure.css"))
+	//r.StaticFile("/favicon.ico", path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "favicon.ico"))
+	r.StaticFile("/favicon.ico", path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "favicon.ico"))
+	//r.StaticFile("/css/pure.css", path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "css", "pure.css"))
+	r.StaticFile("/css/pure.css", path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "css", "pure.css"))
 	r.GET("/", gWeb.IndexGet)
 	r.POST("/", gWeb.IndexPost)
 	r.GET("/index.php", gWeb.IndexGet)

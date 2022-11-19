@@ -1,11 +1,13 @@
 version: "3"
 
 services:
-  main:
-    image: alpine
-    volumes:
-      - ../flag3:/app/flag3
-      - ../web/:/app/web/
-    command: ["/app/flag3"]
+  flag3:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    image: flag3:0.0.1
+    container_name: flag3
+    restart: always
     ports:
       - "8080:8080"
+

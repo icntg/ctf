@@ -13,7 +13,7 @@
 
                 <label for="answer">{{.Big0}} + {{.Big1}} = ?</label>
                 <input class="pure-u-1" id="answer" type="text" name="answer" placeholder="求和" autocomplete="off" value="">
-                <span class="pure-form-message-inline">请在3秒之内算出来哦</span><br/><br/>
+                <span class="pure-form-message-inline">请在{{.Timeout}}秒之内算出来哦</span><br/><br/>
                 <button type="submit" class="pure-button pure-button-primary pure-u-1">算好了！</button>
             </fieldset>
         </form>
