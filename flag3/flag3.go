@@ -171,12 +171,13 @@ func (u *Utility) DecryptDeserialize(key []byte, b64stream string, out interface
 
 // Config //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 type Config struct {
-	Host      string
-	Port      uint16
-	Timeout   int
-	Debug     bool
-	SecretHex string
-	secret    []byte
+	Host           string
+	Port           uint16
+	Timeout        int
+	PasswordLength int
+	Debug          bool
+	SecretHex      string
+	secret         []byte
 }
 
 func (c *Config) ReadFrom(TomlFilename string) {
@@ -210,19 +211,19 @@ func (c *Config) Secret() []byte {
 
 // Web /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 type Web struct {
-	Password6      string
+	Config
+	Password       string
 	Big0           uint64
 	Big1           uint64
 	Hash10         string // 真正的结果
 	Hash10Cover    string // 打码
 	Hash10Value    string // MD5打码
 	StartTimestamp int64
-	Timeout        int64
 	Step           int
 }
 
 func (w *Web) init(remoteIp string) {
-
+	w.Config = gConfig
 	{ // 根据远端IP地址生成固定的6位数字。
 		ds := strings.Split(remoteIp, ".")
 		var ip uint32
@@ -232,16 +233,16 @@ func (w *Web) init(remoteIp string) {
 			ip = (ip << 8) | uint32(a&0xff)
 		}
 		mathRand.Seed(int64(ip))
-		w.Password6 = strconv.Itoa(mathRand.Int())
-		if len(w.Password6) > 6 {
-			w.Password6 = w.Password6[:6]
-		} else if len(w.Password6) < 6 {
+		w.Password = strconv.Itoa(mathRand.Int())
+		if len(w.Password) > gConfig.PasswordLength {
+			w.Password = w.Password[:gConfig.PasswordLength]
+		} else if len(w.Password) < gConfig.PasswordLength {
 			sb := strings.Builder{}
-			for i := 0; i < 6-len(w.Password6); i++ {
+			for i := 0; i < gConfig.PasswordLength-len(w.Password); i++ {
 				sb.WriteString("0")
 			}
-			sb.WriteString(w.Password6)
-			w.Password6 = sb.String()
+			sb.WriteString(w.Password)
+			w.Password = sb.String()
 		}
 	}
 	{ // 生成两个较长的整数
@@ -281,7 +282,6 @@ func (w *Web) init(remoteIp string) {
 	{
 		w.Step = 0
 		w.StartTimestamp = 0
-		w.Timeout = int64(gConfig.Timeout)
 	}
 }
 
@@ -321,8 +321,8 @@ func (w *Web) IndexGet(c *gin.Context) {
 	w.serviceCookieSet(c, gUtility.SerializeEncrypt(gConfig.Secret(), w))
 	log.Printf("[DEBUG] remoteIp = %s, session = %v\n", c.RemoteIP(), *w)
 
-	//html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page0.html"), nil)
-	html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "page0.html"), nil)
+	//html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page0.html"), w)
+	html := w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "page0.html"), w)
 	c.Header("Content-Type", "text/html; charset=UTF-8")
 	c.String(http.StatusOK, "%v", html)
 }
@@ -347,7 +347,7 @@ func (_ *Web) render(pagePath string, parameters any) string {
 func (w *Web) postPage0(c *gin.Context) string {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-	if username == "admin" && password == w.Password6 {
+	if username == "admin" && password == w.Password {
 		w.Step = 1
 		w.StartTimestamp = time.Now().Unix()
 		//return w.render(path.Join(gUtility.CurrentAbsolutePathOfExecutable(), "web", "page1.html"), w)
@@ -359,7 +359,7 @@ func (w *Web) postPage0(c *gin.Context) string {
 
 func (w *Web) postPage1(c *gin.Context) string {
 	var now = time.Now().Unix()
-	if now-w.StartTimestamp > w.Timeout {
+	if now-w.StartTimestamp > int64(w.Timeout) {
 		return "超时了！请重试！"
 	}
 	var bigAns *big.Int
