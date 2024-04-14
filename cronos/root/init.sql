@@ -1,0 +1,19 @@
+DROP DATABASE IF EXISTS `admin`;
+CREATE DATABASE `admin` /*!40100 COLLATE 'utf8mb4_bin' */;
+USE `admin`;
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+	`id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`username` VARCHAR(100) NOT NULL COLLATE 'utf8mb4_bin',
+	`password` VARCHAR(100) NOT NULL COLLATE 'utf8mb4_bin'
+)
+COLLATE='utf8mb4_bin'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+INSERT INTO `users`(`username`, `password`) VALUES('admin', '0192023a7bbd73250516f069df18b500');
+DROP USER IF EXISTS `admin`;
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'KPHZL4KFT2QME4ZXX3KNZLWJ';
+GRANT ALL PRIVILEGES ON `admin`.* TO 'admin'@'localhost';
+GRANT FILE ON *.* TO 'admin'@'localhost';
+FLUSH PRIVILEGES;

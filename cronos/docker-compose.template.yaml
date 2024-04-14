@@ -1,0 +1,116 @@
+version: "3"
+
+services:
+  kaoshi01:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: kaoshi:01
+    container_name: kaoshi01
+    restart: always
+    ports:
+      - "9001:80"
+    environment:
+      flag0000: '{}' # robots.txt
+      flag0001: '{}' # admin login page
+      flag0002: '{}' # admin welcome page
+      flag0003: '{}' # database
+      flag0004: '{}' # www
+      flag0005: '{}' # laravel
+      flag0006: '{}' # user
+      flag0007: '{}' # root
+  
+  kaoshi02:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: kaoshi:01
+    container_name: kaoshi02
+    restart: always
+    ports:
+      - "9002:80"
+    environment:
+      flag0000: '{}' # robots.txt
+      flag0001: '{}' # admin login page
+      flag0002: '{}' # admin welcome page
+      flag0003: '{}' # database
+      flag0004: '{}' # www
+      flag0005: '{}' # laravel
+      flag0006: '{}' # user
+      flag0007: '{}' # root
+  
+  kaoshi03:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: kaoshi:01
+    container_name: kaoshi03
+    restart: always
+    ports:
+      - "9003:80"
+    environment:
+      flag0000: '{}' # robots.txt
+      flag0001: '{}' # admin login page
+      flag0002: '{}' # admin welcome page
+      flag0003: '{}' # database
+      flag0004: '{}' # www
+      flag0005: '{}' # laravel
+      flag0006: '{}' # user
+      flag0007: '{}' # root
+  
+  kaoshi04:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: kaoshi:01
+    container_name: kaoshi04
+    restart: always
+    ports:
+      - "9004:80"
+    environment:
+      flag0000: '{}' # robots.txt
+      flag0001: '{}' # admin login page
+      flag0002: '{}' # admin welcome page
+      flag0003: '{}' # database
+      flag0004: '{}' # www
+      flag0005: '{}' # laravel
+      flag0006: '{}' # user
+      flag0007: '{}' # root
+  
+  kaoshi05:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: kaoshi:01
+    container_name: kaoshi05
+    restart: always
+    ports:
+      - "9005:80"
+    environment:
+      flag0000: '{}' # robots.txt
+      flag0001: '{}' # admin login page
+      flag0002: '{}' # admin welcome page
+      flag0003: '{}' # database
+      flag0004: '{}' # www
+      flag0005: '{}' # laravel
+      flag0006: '{}' # user
+      flag0007: '{}' # root
+  
+  kaoshi06:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: kaoshi:01
+    container_name: kaoshi06
+    restart: always
+    ports:
+      - "9006:80"
+    environment:
+      flag0000: '{}' # robots.txt
+      flag0001: '{}' # admin login page
+      flag0002: '{}' # admin welcome page
+      flag0003: '{}' # database
+      flag0004: '{}' # www
+      flag0005: '{}' # laravel
+      flag0006: '{}' # user
+      flag0007: '{}' # root
