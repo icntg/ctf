@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  php:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: php-mysql:8-apache
+    container_name: php_sqli
+    restart: always
+    ports:
+      - "8081:80"
+    volumes:
+      - ./html:/var/www/html
+      - ./init.sql:/tmp/init.sql
+      - ./start.sh:/tmp/start.sh
+    #   - ./php.ini:/usr/local/etc/php/php.ini
+    environment:
+      MYSQL_HOST: localhost
+      MYSQL_USER: ctf_user
+      MYSQL_PASSWORD: ctf_password
+      MYSQL_DATABASE: ctf
+      CTF_FLAG: flag{23edd864decdb74d6d24ff95fa89488a}

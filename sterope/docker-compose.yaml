@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  php:
+    image: php:8-apache
+    container_name: php_cookie
+    restart: always
+    ports:
+      - "8084:80"
+    volumes:
+      - ./html:/var/www/html
+    environment:
+      CTF_FLAG: flag{eafceacc45bbd0730fc8cceacfe65e37}
+      

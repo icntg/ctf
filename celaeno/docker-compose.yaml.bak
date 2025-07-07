@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  php:
+    image: php:8.2-apache
+    container_name: php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html
+    #   - ./php.ini:/usr/local/etc/php/php.ini
+    environment:
+      MYSQL_HOST: mariadb
+      MYSQL_USER: ctf_user
+      MYSQL_PASSWORD: ctf_password
+      MYSQL_DATABASE: ctf
+    networks:
+      - app-sqli-network
+
+  mariadb:
+    image: mariadb:10.6
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: r0OTP@S5W0Rd!
+      MYSQL_DATABASE: ctf
+      MYSQL_USER: ctf_user
+      MYSQL_PASSWORD: ctf_password
+    volumes:
+      #- ./mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-sqli-network
+
+# volumes:
+#   mariadb_data:
+
+networks:
+  app-sqli-network:
+    driver: bridge
